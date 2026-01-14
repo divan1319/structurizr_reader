@@ -44,9 +44,6 @@
   <div class="w-full flex justify-end py-3">
     <Button label="Agregar" @click="agregarRelation" />
   </div>
-  <pre>
-    {{ stateForm }}
-  </pre>
 </template>
 
 <script setup lang="ts">
