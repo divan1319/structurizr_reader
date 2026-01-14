@@ -3,25 +3,39 @@
     <h2 class="text-2xl font-bold text-slate-900">Elementos</h2>
     <DataTable
       v-model:filters="filters"
+      v-model:editing-rows="editingRow"
+      edit-mode="row"
       ref="dtElements"
       :value="csvData"
       paginator
-      data-key="id"
+      data-key="uuid"
       filter-display="row"
       :rows="15"
       :rows-per-page-options="[15, 30, 60, 100]"
+      @row-edit-save="onRowEditSave"
     >
-    <template #header>
+      <template #header>
         <div class="w-full flex justify-between">
-            <ElementsCSV />
-            <Button label="Agregar registro" icon="pi pi-plus-circle" @click="dialogVisible = true" variant="outlined" severity="contrast" />
+          <ElementsCSV />
+          <Button
+            label="Agregar registro"
+            icon="pi pi-plus-circle"
+            @click="dialogVisible = true"
+            variant="outlined"
+            severity="contrast"
+          />
         </div>
-    </template>
+      </template>
       <template #empty>
         <p class="text-center uppercase text-xs">Datos no cargados</p>
       </template>
       <template #paginatorend>
-        <Button icon="pi pi-download" text severity="contrast" @click="exportCSV($event)" />
+        <Button
+          icon="pi pi-download"
+          text
+          severity="contrast"
+          @click="exportCSV($event)"
+        />
       </template>
       <Column field="id" header="id" :showFilterMenu="false">
         <template #body="{ data }">
@@ -34,6 +48,9 @@
             @input="filterCallback()"
             placeholder="Buscar por id"
           />
+        </template>
+        <template #editor="{ data, field }">
+          <InputText v-model="data[field]" fluid />
         </template>
       </Column>
       <Column field="type" header="type" :showFilterMenu="false">
@@ -56,6 +73,9 @@
             </template>
           </MultiSelect>
         </template>
+        <template #editor="{ data, field }">
+          <Select v-model="data[field]" :options="typesComputed" showClear />
+        </template>
       </Column>
       <Column field="name" header="name" :showFilterMenu="false">
         <template #body="{ data }">
@@ -69,7 +89,11 @@
             placeholder="Buscar por nombre"
           />
         </template>
+        <template #editor="{ data, field }">
+          <InputText v-model="data[field]" fluid />
+        </template>
       </Column>
+       <template #footer>Total de elementos: {{ csvData ? csvData.length : 0 }} </template>
       <Column field="parent" header="parent" :showFilterMenu="false">
         <template #body="{ data }">
           <span>{{ data.parent }}</span>
@@ -90,6 +114,9 @@
               </div>
             </template>
           </MultiSelect>
+        </template>
+        <template #editor="{ data, field }">
+          <Select v-model="data[field]" :options="parentsComputed" showClear />
         </template>
       </Column>
       <Column field="tags" header="tags" :showFilterMenu="false">
@@ -113,6 +140,9 @@
             </template>
           </MultiSelect>
         </template>
+        <template #editor="{ data, field }">
+          <Select v-model="data[field]" :options="tagsComputed" showClear />
+        </template>
       </Column>
       <Column field="description" header="description" :showFilterMenu="false">
         <template #body="{ data }">
@@ -126,9 +156,28 @@
             placeholder="Buscar por descripción"
           />
         </template>
+        <template #editor="{ data, field }">
+          <InputText v-model="data[field]" fluid />
+        </template>
+      </Column>
+      <Column :row-editor="true"></Column>
+      <Column header="Eliminar">
+        <template #body="{ data }">
+          <Button
+            icon="pi pi-trash"
+            class="p-button-danger"
+            @click="csvStore.eliminarElemento(data.uuid)"
+          />
+        </template>
       </Column>
     </DataTable>
-    <Dialog v-model:visible="dialogVisible" header="Agregar elemento" modal :style="{ width: '60vw' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }" >
+    <Dialog
+      v-model:visible="dialogVisible"
+      header="Agregar elemento"
+      modal
+      :style="{ width: '60vw' }"
+      :breakpoints="{ '1199px': '75vw', '575px': '90vw' }"
+    >
       <AgregarElement @close="closeModal" />
     </Dialog>
   </div>
@@ -138,7 +187,15 @@
 import { computed, ref } from "vue";
 import type { CSVElements } from "../types/types";
 import ElementsCSV from "../components/ElementsCSV.vue";
-import { Button, Column, DataTable, Dialog, InputText, MultiSelect } from "primevue";
+import {
+  Button,
+  Column,
+  DataTable,
+  Dialog,
+  InputText,
+  MultiSelect,
+  Select,
+} from "primevue";
 import { FilterMatchMode } from "@primevue/core/api";
 import { useCsvStore } from "@/stores/csv";
 import AgregarElement from "@/components/AgregarElement.vue";
@@ -147,7 +204,8 @@ import AgregarElement from "@/components/AgregarElement.vue";
 const csvStore = useCsvStore();
 
 const dialogVisible = ref(false);
-const dtElements = ref()
+const dtElements = ref();
+const editingRow = ref([]);
 
 const filters = ref({
   id: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -158,7 +216,7 @@ const filters = ref({
   description: { value: null, matchMode: FilterMatchMode.CONTAINS },
 });
 
-const csvData = computed(() => csvStore.csvElementsData);
+const csvData = computed(() => csvStore.csvElementsDataComputed);
 
 const typesComputed = computed(() => csvStore.typesComputed);
 const parentsComputed = computed(() => csvStore.parentsComputed);
@@ -167,10 +225,15 @@ const tagsComputed = computed(() => csvStore.tagsComputed);
 const existData = computed(() => csvData.value.length > 0);
 
 const exportCSV = (event: any) => {
- dtElements.value.exportCSV();   
-}
+  dtElements.value.exportCSV();
+};
 
 const closeModal = () => {
-    dialogVisible.value = false;
-}
+  dialogVisible.value = false;
+};
+const onRowEditSave = (event: any) => {
+  let { newData, index } = event;
+  console.log(newData, index);
+  csvStore.editarElemento(newData);
+};
 </script>
