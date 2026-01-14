@@ -18,12 +18,11 @@ import { Toast } from 'primevue';
 import { onMounted, onBeforeUnmount } from 'vue';
 
 // Definimos la función manejadora
-const handleBeforeUnload = (event:any) => {
+const handleBeforeUnload = (event:BeforeUnloadEvent) => {
     // Lógica opcional: Solo preguntar si hay cambios sin guardar
     // if (!hayCambiosSinGuardar.value) return; 
 
     event.preventDefault();
-    event.returnValue = ''; // Necesario para navegadores basados en Chromium
 };
 
 onMounted(() => {

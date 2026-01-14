@@ -164,7 +164,7 @@ const tagsComputed = computed(() => csvStore.tagsComputed);
 
 const existData = computed(() => csvData.value.length > 0);
 
-const exportCSV = () => {
+const exportCSV = (event: any) => {
  dtElements.value.exportCSV();   
 }
 

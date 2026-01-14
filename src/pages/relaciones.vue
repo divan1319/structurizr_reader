@@ -69,7 +69,7 @@ const getTree = (source:string) => {
 }
 
 
-const exportCSV = () => {
+const exportCSV = (event: any) => {
  dtRelations.value.exportCSV();   
 }
 
