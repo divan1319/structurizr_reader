@@ -44,13 +44,16 @@
   <div class="w-full flex justify-end py-3">
     <Button label="Agregar" @click="agregarRelation" />
   </div>
+  <pre>
+    {{ stateForm }}
+  </pre>
 </template>
 
 <script setup lang="ts">
 import { useCsvStore } from "@/stores/csv";
 import { buildFullPath } from "@/utils/transformations";
 import { Button, FloatLabel, InputText, Select, useToast } from "primevue";
-import { computed, reactive } from "vue";
+import { computed, reactive, watch } from "vue";
 
 const csvStore = useCsvStore();
 const csvData = computed(() => csvStore.csvElementsData);
@@ -70,7 +73,7 @@ const stateForm = reactive({
  * Filtra los elementos del almacén que son de tipo "Component".
  */
 const sources = computed(() =>
-  csvData.value.filter((item) => item.type === "Component")
+  csvData.value.filter((item) => item.type === "Component" && item.id !== stateForm.target)
 );
 
 /**
@@ -132,4 +135,16 @@ const validationForm = () => {
     if(stateForm.target === "") return [true, "Debe seleccionar el destino"]
     return [false, ""];
 }
+
+watch(()=> stateForm.source, (newData)=>{
+  if(stateForm.target == newData){
+    stateForm.target = ""
+  }
+})
+
+watch(()=> stateForm.target, (newData)=>{
+  if(stateForm.source == newData){
+    stateForm.source = ""
+  }
+})
 </script>
