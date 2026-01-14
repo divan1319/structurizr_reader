@@ -39,7 +39,10 @@
         <Select
           v-else
           v-model="stateForm.parent"
-          :options="parentsComputed"
+          :options="parentsListComputed"
+          optionLabel="name"
+          optionValue="id"
+          filter
           class="w-full"
           variant="filled"
         />
@@ -95,10 +98,7 @@
   <div class="w-full flex justify-end py-3">
     <Button label="Agregar" @click="agregarElemento" />
   </div>
-  <pre>
-  {{ stateForm }}
-</pre
-  >
+
 </template>
 
 <script setup lang="ts">
@@ -149,6 +149,16 @@ const typesComputed = computed(() => csvStore.typesComputed);
  * @returns {Array} - Lista de padres.
  */
 const parentsComputed = computed(() => csvStore.parentsComputed);
+
+const parentsListComputed = computed(()=>{
+  return parentsComputed.value.map(p =>{
+    const parent = csvData.value.find(e => e.id === p)
+    return {
+      id: parent?.id,
+      name: `${parent?.id} - ${parent?.name}`
+    }
+  })
+})
 
 /**
  * Obtiene los tags disponibles.

@@ -4,6 +4,7 @@
       <Select
         v-model="stateForm.source"
         :options="sources"
+        filter
         option-label="name"
         option-value="id"
         class="w-full"
@@ -15,6 +16,7 @@
       <Select
         v-model="stateForm.target"
         :options="targets"
+        filter
         option-label="name"
         option-value="id"
         class="w-full"

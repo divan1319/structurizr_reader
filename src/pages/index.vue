@@ -78,6 +78,7 @@
           <MultiSelect
             v-model="filterModel.value"
             @change="filterCallback()"
+            filter
             :options="parentsComputed"
             placeholder="Buscar por parent"
             style="min-width: 14rem"
@@ -99,6 +100,7 @@
           <MultiSelect
             v-model="filterModel.value"
             @change="filterCallback()"
+            filter
             :options="tagsComputed"
             placeholder="Buscar por tags"
             style="min-width: 14rem"
