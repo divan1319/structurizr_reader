@@ -48,7 +48,7 @@ const handleFileUpload = (event: any) => {
       header: true, // Convierte las filas en objetos usando la primera fila como claves
       skipEmptyLines: true, // Ignora líneas vacías
       complete: (results: any) => {
-        // 3. Guardamos el resultado en el ref
+        // 3. Guardamos el resultado en el store
         csvStore.setCvsElementsData(results.data);
       },
       error: (error) => {

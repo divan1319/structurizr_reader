@@ -7,14 +7,23 @@ export const useCsvStore = defineStore("csvStore", () => {
   const csvRelationsData = ref<CSVRelations[]>([]);
 
   function setCvsElementsData(data: CSVElements[]) {
-    csvElementsData.value = data;
+    if(csvElementsData.value.length === 0){
+      csvElementsData.value = data;
+    }else{
+      csvElementsData.value.push(...data);
+    }
   }
 
   function setCvsRelationsData(data: CSVRelations[]) {
-    csvRelationsData.value = data;
+    if(csvRelationsData.value.length === 0){
+      csvRelationsData.value = data;
+    }else{
+      csvRelationsData.value.push(...data);
+    }
   }
 
   function agregarElemento(data: CSVElements) {
+    console.log('agregarElemento store',data)
     csvElementsData.value.push(data);
   }
 
@@ -63,6 +72,7 @@ export const useCsvStore = defineStore("csvStore", () => {
     setCvsElementsData,
     setCvsRelationsData,
     agregarElemento,
+    agregarRelacion,
     //getters
     typesComputed,
     parentsComputed,
